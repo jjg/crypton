@@ -4,9 +4,29 @@
         <script src="js/openpgp.js"></script>
     </head>
     <body>
-        public key: <textarea id="public_key"></textarea><br/>
-        <input type="button" id="do_encrypt" onClick="doEncrypt()" value="encrypt"/><br/>
-        output: <textarea id="output"></textarea>
+        <div style="border:solid black;">
+            <h3>Encrypt</h3>
+            public key: <textarea id="public_key"></textarea><br/>
+            <input type="button" id="do_encrypt" onClick="doEncrypt()" value="encrypt"/></br>
+            output: <textarea id="encrypt_output"></textarea>
+        </div>
+
+        <div style="border: solid red;">
+            <h3>Decrypt</h3>
+            private key: <textarea id="private_key"></textarea><br/>
+            <input type="button" id="do_decrypt" onClick="doDecrypt()" value="decrypt"/></br>
+            output: <textarea id="decrypt_output"></textarea>
+        </div>
+
+        <div style="border: solid green;">
+            <h3>Generate Keys</h3>
+            name <input type="text" id="key_userid"></br>
+            email <input type="text" id="key_email"></br>
+            secret: <input type="text" id="key_secret"></br>
+            <input type="button" id="do_keys" onClick="doKeys()" value="generate keys"/></br>
+            private key: <textarea id="new_private_key"></textarea></br>
+            public key: <textarea id="new_public_key"></textarea></br>
+        </div>
 
         <script type='text/javascript'>
             console.log('script tag loaded');
@@ -28,6 +48,25 @@
 
                 openpgp.encrypt(options).then(function(ciphertext){
                     console.log(ciphertext);
+                    document.getElementById('encrypt_output').value = ciphertext.data;
+                });
+            }
+
+            function doDecrypt(){
+                console.log('got doDecrypt()');
+
+                var private_key = document.getElementById('private_key').value;
+
+                console.log('private_key: ' + private_key);
+
+                var options = {
+                    message: openpgp.message.readArmored(document.getElementById('encrypt_output')),
+                    privateKeys: openpgp.key.readArmored(private_key).keys[0]
+                };
+
+                openpgp.decrypt(options).then(function(plaintext){
+                    console.log(plaintext);
+                    document.getElementById('decrypt_output').value = plantext.data;
                 });
             }
 
