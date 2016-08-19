@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Crypton experiments</title>
+        <script src="js/openpgp.js"></script>
+    </head>
+    <body>
+        public key: <textarea id="public_key"></textarea><br/>
+        <input type="button" id="do_encrypt" onClick="doEncrypt()" value="encrypt"/><br/>
+        output: <textarea id="output"></textarea>
+
+        <script type='text/javascript'>
+            console.log('script tag loaded');
+
+            openpgp.initWorker({ path:'js/openpgp.worker.js' });
+            openpgp.config.aead_protect = true
+
+            function doEncrypt(){
+                console.log('got doEncrypt()');
+
+                var public_key = document.getElementById('public_key').value;
+
+                console.log('public_key: ' + public_key);
+
+                var options = {
+                    data: 'Hello World!',
+                    publicKeys: openpgp.key.readArmored(public_key).keys
+                };
+
+                openpgp.encrypt(options).then(function(ciphertext){
+                    console.log(ciphertext);
+                });
+            }
+
+        </script>
+    </body>
+</html>
