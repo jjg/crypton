@@ -70,6 +70,28 @@
                 });
             }
 
+            function doKeys(){
+                console.log('got doKeys()');
+
+                var key_name = document.getElementById('key_userid').value;
+                var key_email = document.getElementById('key_email').value;
+                var key_secret = document.getElementById('key_secret').value;
+                
+                var options = {
+                    userIds: [{name:key_name, email:key_email}],
+                    numBits: 4096,
+                    passphrase: key_secret
+                };
+
+                console.log('options: ' + JSON.stringify(options));
+
+                openpgp.generateKey(options).then(function(key){
+                    console.log('key: ' + JSON.stringify(key));
+                    document.getElementById('new_private_key').value = key.privateKeyArmored;
+                    document.getElementById('new_public_key').value = key.publicKeyArmored;
+                });
+            }
+
         </script>
     </body>
 </html>
