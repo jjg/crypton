@@ -6,27 +6,30 @@
     <body>
         <div style="border:solid black;">
             <h3>Encrypt</h3>
-            public key: <textarea id="public_key"></textarea><br/>
+            message: <textarea id="enc_message"></textarea></br>
+            public key: <textarea id="enc_public_key"></textarea></br>
+            private key(unused ATM): <textarea id="enc_private_key"></textarea></br>
             <input type="button" id="do_encrypt" onClick="doEncrypt()" value="encrypt"/></br>
-            output: <textarea id="encrypt_output"></textarea>
+            output: <textarea id="enc_output"></textarea>
         </div>
 
         <div style="border: solid red;">
             <h3>Decrypt</h3>
-            private key: <textarea id="private_key"></textarea></br>
-            secret: <input type="text" id="decrypt_secret"></br>
+            message: <textarea id="dec_message"></textarea></br>
+            private key: <textarea id="dec_private_key"></textarea></br>
+            secret: <input type="text" id="dec_secret"></br>
             <input type="button" id="do_decrypt" onClick="doDecrypt()" value="decrypt"/></br>
-            output: <textarea id="decrypt_output"></textarea>
+            output: <textarea id="dec_output"></textarea>
         </div>
 
         <div style="border: solid green;">
             <h3>Generate Keys</h3>
-            name <input type="text" id="key_userid"></br>
-            email <input type="text" id="key_email"></br>
-            secret: <input type="text" id="key_secret"></br>
+            name <input type="text" id="gen_userid"></br>
+            email <input type="text" id="gen_email"></br>
+            secret: <input type="text" id="gen_secret"></br>
             <input type="button" id="do_keys" onClick="doKeys()" value="generate keys"/></br>
-            private key: <textarea id="new_private_key"></textarea></br>
-            public key: <textarea id="new_public_key"></textarea></br>
+            private key: <textarea id="gen_private_key"></textarea></br>
+            public key: <textarea id="gen_public_key"></textarea></br>
         </div>
 
         <script type='text/javascript'>
@@ -38,22 +41,71 @@
             function doEncrypt(){
                 console.log('got doEncrypt()');
 
-                var public_key = document.getElementById('public_key').value;
-
-                console.log('public_key: ' + public_key);
+                var message = document.getElementById('enc_message').value;
+                var public_key = document.getElementById('enc_public_key').value;
+                var private_key = document.getElementById('enc_private_key').value;
 
                 var options = {
-                    data: 'Hello World!',
+                    data: message,
                     publicKeys: openpgp.key.readArmored(public_key).keys
                 };
 
+                console.log('encrypt options: ' + JSON.stringify(options));
+
                 openpgp.encrypt(options).then(function(ciphertext){
-                    console.log(ciphertext);
-                    document.getElementById('encrypt_output').value = ciphertext.data;
+                    console.log('ciphertext: ' + JSON.stringify(ciphertext));
+                    document.getElementById('enc_output').value = ciphertext.data;
                 });
             }
 
             function doDecrypt(){
+
+                console.log('got doDecrypt()');
+
+                var private_key = openpgp.key.readArmored(document.getElementById('dec_private_key').value);
+                var secret = document.getElementById('dec_secret').value;
+                var message_armored = document.getElementById('dec_message').value;
+
+                console.log('private_key: ');
+                console.log(private_key);
+
+                // decrypt private key
+                console.log('decrypted private_key: ');
+                console.log(private_key.keys[0].decrypt(secret));
+
+                // decrypt message
+                var options = {
+                    message: openpgp.message.readArmored(message_armored),
+                    privateKey: private_key.keys[0] 
+                };
+
+                console.log('decrypt options: ' + JSON.stringify(options));
+
+                openpgp.decrypt(options).then(function(decrypted){
+                    console.log('decrypted: ');
+                    console.log(decrypted);
+                    document.getElementById('dec_output').value = decrypted.data;
+                });
+
+/*
+                // decrypt private key
+                openpgp.decryptSessionKey({
+                    message: openpgp.message.readArmored(message_armored),
+                    privateKey: private_key.keys[0] 
+                }).then(function(decryptedSessionKey){
+
+                    // decrypt message
+                    return openpgp.decrypt({
+                        sessionKey: decryptedSessionKey,
+                        message: openpgp.message.readArmored(message_armored)
+                    });
+                }).then(function(decrypted){
+                    console.log('decrypted: ' + JSON.stringify(decrypted));
+                    document.getElementById('dec_output').value = decrypted.data;
+                });
+*/
+
+/*
 
                 // debuging based on test here: https://github.com/openpgpjs/openpgpjs/blob/master/test/general/openpgp.js#L565
                 console.log('got doDecrypt()');
@@ -96,27 +148,28 @@
                     console.log(plaintext);
                     document.getElementById('decrypt_output').value = plantext.data;
                 });
+*/
             }
 
             function doKeys(){
                 console.log('got doKeys()');
 
-                var key_name = document.getElementById('key_userid').value;
-                var key_email = document.getElementById('key_email').value;
-                var key_secret = document.getElementById('key_secret').value;
+                var name = document.getElementById('gen_userid').value;
+                var email = document.getElementById('gen_email').value;
+                var secret = document.getElementById('gen_secret').value;
                 
                 var options = {
-                    userIds: [{name:key_name, email:key_email}],
+                    userIds: [{name:name, email:email}],
                     numBits: 4096,
-                    passphrase: key_secret
+                    passphrase: secret
                 };
 
-                console.log('options: ' + JSON.stringify(options));
+                console.log('generateKey() options: ' + JSON.stringify(options));
 
                 openpgp.generateKey(options).then(function(key){
                     console.log('key: ' + JSON.stringify(key));
-                    document.getElementById('new_private_key').value = key.privateKeyArmored;
-                    document.getElementById('new_public_key').value = key.publicKeyArmored;
+                    document.getElementById('gen_private_key').value = key.privateKeyArmored;
+                    document.getElementById('gen_public_key').value = key.publicKeyArmored;
                 });
             }
 
