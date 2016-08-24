@@ -21,4 +21,13 @@ Additionally, we don't want to force the user to provide the private key every t
 
 Assuming the client-side code has access to the private key, the rest of the user activity amounts to pulling encrypted data (messages, posts, etc.) from the server, decripting it for display, then encrypting & transmitting new data back to the server.  One think I haven't explicitly stated is whether or not data such as the trusted friends list are encrypted.  I think that it's a good idea, since we have the means, to encrypt everyhting that's persisted or traverses the server, just to err on the safe side.  However there may be some unanticipated reason this isn't possible (some chicken-and-egg problem or race condition) so I don't want to rule-out the possibility of the need to store non-message data in unencrypted forms.
 
+## Reference
+
+Some random things that have beeen useful so far:
+
+*  https://github.com/openpgpjs/openpgpjs/blob/master/README.md#getting-started
+*  https://github.com/openpgpjs/openpgpjs/blob/master/test/general/openpgp.js
+*  https://openpgpjs.org/openpgpjs/doc/module-openpgp.html
+*  https://openpgpjs.org/openpgpjs/doc/module-key.html
+*  https://github.com/openpgpjs/openpgpjs/issues/431
 
