@@ -86,69 +86,6 @@
                     console.log(decrypted);
                     document.getElementById('dec_output').value = decrypted.data;
                 });
-
-/*
-                // decrypt private key
-                openpgp.decryptSessionKey({
-                    message: openpgp.message.readArmored(message_armored),
-                    privateKey: private_key.keys[0] 
-                }).then(function(decryptedSessionKey){
-
-                    // decrypt message
-                    return openpgp.decrypt({
-                        sessionKey: decryptedSessionKey,
-                        message: openpgp.message.readArmored(message_armored)
-                    });
-                }).then(function(decrypted){
-                    console.log('decrypted: ' + JSON.stringify(decrypted));
-                    document.getElementById('dec_output').value = decrypted.data;
-                });
-*/
-
-/*
-
-                // debuging based on test here: https://github.com/openpgpjs/openpgpjs/blob/master/test/general/openpgp.js#L565
-                console.log('got doDecrypt()');
-
-                var secret = document.getElementById('decrypt_secret').value;
-
-                console.log('secret: ' + secret);
-
-                //var encrypted_pk = openpgp.key.readArmored(document.getElementById('private_key').value); 
-
-                //console.log('encrypted_pk: ' + JSON.stringify(encrypted_pk));
-
-                //encrypted_pk.keys[0].decrypt(secret).then(decrypted_
-
-                //console.log('decrypted_pk: ' + JSON.stringify(decrypted_pk));
-
-                //console.log('encrypted_pk after decrypt(): ' + JSON.stringify(encrypted_pk));
-
-                // decrypt private key
-                //var secret = document.getElementById('decrypt_passphrase').value;
-                //console.log('secret: ' + secret);
-    
-                var pk = openpgp.key.readArmored(document.getElementById('private_key').value);
-                console.log('pk: ' + JSON.stringify(pk));
-
-                var keyOptions = {
-                    message: openpgp.message.readArmored(document.getElementById('encrypt_output')),
-                    privateKey: pk.keys[0]
-                };
-
-                var sessionKey = openpgp.decryptSessionKey(keyOptions);
-                console.log('sessionKey: ' + sessionKey);
-
-                var options = {
-                    message: openpgp.message.readArmored(document.getElementById('encrypt_output')),
-                    sessionKey: sessionKey 
-                };
-
-                openpgp.decrypt(options).then(function(plaintext){
-                    console.log(plaintext);
-                    document.getElementById('decrypt_output').value = plantext.data;
-                });
-*/
             }
 
             function doKeys(){
